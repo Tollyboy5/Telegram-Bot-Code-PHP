@@ -1,44 +1,41 @@
 <?php
-
 namespace App\Http\Controllers;
 
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
-use WeStacks\TeleBot\TeleBot;
+use WeStacks\TeleBot\Laravel\TeleBot;
 
 class TelegramBotController extends Controller
 {
-    //+++++++++++++++++++++++++++++++++++++++
-    private $bot;
-    private $message_text;
-    private $chat_id = 5123543075;
-    //+++++++++++++++++++++++++++++++++++++++
-    public function __construct()
-    {
-        $this->bot = new TeleBot('YOUR TOKEN');
-    }
-    //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    //====================================
+    PRIVATE $message_text;
+    private $chat_id = 5483933893;
+    //====================================
+    // On the .env file add yourf bot token
+    // TELEGRAM_BOT_TOKEN= <BOT TOKEN>
+    //==========================================================================
     public function index()
     {
         return view('welcome');
     }
-    //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    //==========================================================================
     public function telegram_webhook(Request $request)
     {
-        //+++++++++++++++++++++++++++++++++++++++++
+        //======================================
         //Webhook
-        //+++++++++++++++++++++++++++++++++++++++++
+        //======================================
         $data = json_decode($request->all());
         if ($data) {
             $this->chat_id      = $data->message->chat->id;
             $this->message_text = $data->message->text;
         }
     }
-    //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    //==========================================================================
     public function sendMessage(Request $request)
     {
         try {
-            $message = $this->bot->sendMessage([
+            $message = TeleBot::sendMessage([
                 'chat_id'      => $this->chat_id,
                 'text'         => 'Welcome To Code-180 Youtube Channel',
                 'reply_markup' => [
@@ -48,7 +45,7 @@ class TelegramBotController extends Controller
                     ]]],
                 ],
             ]);
-            // $message = $this->bot->sendMessage([
+            // $message = TeleBot::sendMessage([
             //     'chat_id' => $this->chat_id,
             //     'text'    => 'Welcome To Code-180 Youtube Channel',
             // ]);
@@ -57,17 +54,17 @@ class TelegramBotController extends Controller
         }
         return Response::json($message);
     }
-    //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    //==========================================================================
     public function sendPhoto(Request $request)
     {
         try {
-            //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+            //=================================================================
             // 1. https://anyurl/640
             // 2. fopen('local/file/path', 'r')
             // 3. fopen('https://picsum.photos/640', 'r'),
             // 4. new InputFile(fopen('https://picsum.photos/640', 'r'), 'test-image.jpg')
-            //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-            $message = $this->bot->sendPhoto([
+            //=================================================================
+            $message = TeleBot::sendPhoto([
                 'chat_id' => $this->chat_id,
                 'photo'   => [
                     'file'     => fopen(asset('public/upload/img.jpg'), 'r'),
@@ -79,17 +76,17 @@ class TelegramBotController extends Controller
         }
         return Response::json($message);
     }
-    //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    //==========================================================================
     public function sendAudio(Request $request)
     {
         try {
-            //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+            //=================================================================
             // 1. https://picsum.photos/640
             // 2. fopen('local/file/path', 'r')
             // 3. fopen('https://picsum.photos/640', 'r'),
             // 4. new InputFile(fopen('https://picsum.photos/640', 'r'), 'test-image.jpg')
-            //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-            $message = $this->bot->sendAudio([
+            //=================================================================
+            $message = TeleBot::sendAudio([
                 'chat_id' => $this->chat_id,
                 'audio'   => fopen(asset('public/upload/demo.mp3'), 'r'),
                 'caption' => "Demo Audio File",
@@ -99,17 +96,17 @@ class TelegramBotController extends Controller
         }
         return Response::json($message);
     }
-    //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    //==========================================================================
     public function sendVideo(Request $request)
     {
         try {
-            //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+            //=================================================================
             // 1. https://picsum.photos/640
             // 2. fopen('local/file/path', 'r')
             // 3. fopen('https://picsum.photos/640', 'r'),
             // 4. new InputFile(fopen('https://picsum.photos/640', 'r'), 'test-image.jpg')
-            //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-            $message = $this->bot->sendVideo([
+            //=================================================================
+            $message = TeleBot::sendVideo([
                 'chat_id' => $this->chat_id,
                 'video'   => fopen(asset('public/upload/Password.mp4'), 'r'),
             ]);
@@ -118,17 +115,17 @@ class TelegramBotController extends Controller
         }
         return Response::json($message);
     }
-    //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    //==========================================================================
     public function sendVoice(Request $request)
     {
         try {
-            //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+            //=================================================================
             // 1. https://picsum.photos/640
             // 2. fopen('local/file/path', 'r')
             // 3. fopen('https://picsum.photos/640', 'r'),
             // 4. new InputFile(fopen('https://picsum.photos/640', 'r'), 'test-image.jpg')
-            //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-            $message = $this->bot->sendVoice([
+            //=================================================================
+            $message = TeleBot::sendVoice([
                 'chat_id' => $this->chat_id,
                 'voice'   => fopen(asset('public/upload/demo.mp3'), 'r'),
             ]);
@@ -137,17 +134,17 @@ class TelegramBotController extends Controller
         }
         return Response::json($message);
     }
-    //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    //==========================================================================
     public function sendDocument(Request $request)
     {
         try {
-            //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+            //=================================================================
             // 1. https://picsum.photos/640
             // 2. fopen('local/file/path', 'r')
             // 3. fopen('https://picsum.photos/640', 'r'),
             // 4. new InputFile(fopen('https://picsum.photos/640', 'r'), 'test-image.jpg')
-            //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-            $message = $this->bot->sendDocument([
+            //=================================================================
+            $message = TeleBot::sendDocument([
                 'chat_id'  => $this->chat_id,
                 'document' => fopen(asset('public/upload/Test_Doc.pdf'), 'r'),
             ]);
@@ -156,11 +153,11 @@ class TelegramBotController extends Controller
         }
         return Response::json($message);
     }
-    //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    //==========================================================================
     public function sendLocation(Request $request)
     {
         try {
-            $message = $this->bot->sendLocation([
+            $message = TeleBot::sendLocation([
                 'chat_id'   => $this->chat_id,
                 'latitude'  => 19.6840852,
                 'longitude' => 60.972437,
@@ -170,11 +167,11 @@ class TelegramBotController extends Controller
         }
         return Response::json($message);
     }
-    //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    //==========================================================================
     public function sendVenue(Request $request)
     {
         try {
-            $message = $this->bot->sendVenue([
+            $message = TeleBot::sendVenue([
                 'chat_id'   => $this->chat_id,
                 'latitude'  => 19.6840852,
                 'longitude' => 60.972437,
@@ -186,11 +183,11 @@ class TelegramBotController extends Controller
         }
         return Response::json($message);
     }
-    //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    //==========================================================================
     public function sendContact(Request $request)
     {
         try {
-            $message = $this->bot->sendContact([
+            $message = TeleBot::sendContact([
                 'chat_id'      => $this->chat_id,
                 'photo'        => 'https://picsum.photos/640',
                 'phone_number' => '1234567890',
@@ -201,11 +198,11 @@ class TelegramBotController extends Controller
         }
         return Response::json($message);
     }
-    //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    //==========================================================================
     public function sendPoll(Request $request)
     {
         try {
-            $message = $this->bot->sendPoll([
+            $message = TeleBot::sendPoll([
                 'chat_id'  => $this->chat_id,
                 'question' => 'What is best coding language for 2023',
                 'options'  => ['python', 'javascript', 'typescript', 'php', 'java'],
